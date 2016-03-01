@@ -36,7 +36,7 @@ build:
 integrations:
     hub:
       - integrationName: "Amazon ECR - ttrahan"
-        type: ecr
+        type: amazon-ecr
         branches:
           only:
             - amazon-ecr-ecs-beta
