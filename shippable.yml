@@ -8,56 +8,35 @@ node_js:
 env:
   global:
     - XUNIT_FILE=./shippable/testresults/result.xml
-    - AWS_EB_APPLICATION=aye0aye # existing EB application name
-    - AWS_EB_ENVIRONMENT=micro-api-beta # existing EB environment name
-    - AWS_S3_BUCKET=aye0aye # existing S3 bucket that allows EB access
-    - AWS_S3_FOLDER=$AWS_EB_APPLICATION/$AWS_EB_ENVIRONMENT # S3 folder to use
-    - AWS_REGION=us-east-1 # AWS region to deploy into
-    - REGISTRY_ACCOUNT=ttrahan # image registry account name, e.g. Docker Hub account
-    - ACCOUNT_IDENTIFIER=shippable.$REGISTRY_ACCOUNT
-    - AWS_DEPLOY_JSON=Dockerrun.aws.json.$ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION
-    - AWS_DOCKER_CONFIG=dockerconfig.$ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION
-    # encrypted variable for AWS_ACCESS_KEY_ID, unique to each Shippable project
-    # you must generate your own hash within Shippable project settings
-    - secure: KNPdy2sc6Y/jiy9/yd7m3mWYLWRK/lkDcM2hF7A699c8WuGcXZ0DoO3Qb59HuZRGoYA6GPURwprusLySSC5rKV7wTJBSDA4GQCoUboJ7ZtRrFm5gMF8p/uQVrLCyb4GmaX28BqJzONrH936j9fFeSsTJpJhWMGjeSJaOi881tGXJb7QZNDkpTtWsN7yg8eU2VJklxlNGVXEZsTxXrtdY6Jw/TiSsnv6DhmB3bqw+0VAWu+smbVEtcYdPyx2S2kpmqisTHcvJBck98d7lt0ay9MNhNCtV7AAJkRwc64dYs44G2Tcy+Lk+baCvm0uJSEmZ5nXk1f7bjb3xRbiPObgm9A==
-    # encrypted variable for AWS_SECRET_ACCESS_KEY, unique to each Shippable project
-    # you must generate your own hash within Shippable project settings
-    - secure: Z64+B7KlurxU44tqlsrQhIxvbEw1sdVLmhBW6LV6nQK6bbxI3LxmlUsOlzhtoaTnvbam8TWA703JOSD9YC2hZ/7HI/P0IGsvOh7uF8ZcgXu0/LBKz8N47yPHLaRJHOVEPk6R2XDaRy0kCry67aZhonLMnjkZHe5HsJcKUxlK7g/bYm3evnzf/+ozPCR85e8IxzdjFLC8VY6QId6LmBGbrq3lLa97Mm+9p47oZX4ZvpXsG8FIKjXO7PHjyL/kokjDyh6lCso1uGsUtEwVJ7gO6K/Ccs51j81q5VdzoWoRoCWadlt/8xevkv48BjYg8J/B3bBPIj5F779LF0ytjz9D7A==
+    - APPLICATION=aye0aye
+    - SERVICE=micro-api
+    - REGISTRY_ACCOUNT=288971733297.dkr.ecr.us-east-1.amazonaws.com # image registry account name/location
 
 build:
   pre_ci:
-    - docker build -t $REGISTRY_ACCOUNT/$AWS_EB_APPLICATION:latest .
+    - docker build -t $REGISTRY_ACCOUNT/$APPLICATION/$SERVICE:latest .
     - node --version
     - mkdir -p ./shippable/testresults
     - mkdir -p ./shippable/codecoverage
   pre_ci_boot:
-    image_name: $REGISTRY_ACCOUNT/$AWS_EB_APPLICATION
+    image_name: $REGISTRY_ACCOUNT/$APPLICATION/$SERVICE
     image_tag: latest
     pull: false
     options: --privileged=true
   ci:
-    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-    - aws configure set region $AWS_REGION
     - npm install
     - grunt
   post_ci:
     - ./node_modules/.bin/istanbul cover grunt -- -u tdd
     - ./node_modules/.bin/istanbul report cobertura --dir  ./shippable/codecoverage/
     - echo $BUILD_NUMBER > ~/buildConfig.txt
-    - docker tag -f $REGISTRY_ACCOUNT/$AWS_EB_APPLICATION:latest $REGISTRY_ACCOUNT/$AWS_EB_APPLICATION:$BRANCH.$BUILD_NUMBER
-    - docker push $REGISTRY_ACCOUNT/$AWS_EB_APPLICATION:$BRANCH.$BUILD_NUMBER
-    - cat Dockerrun.aws.json | sed "s/<IMAGE_NAME>/$REGISTRY_ACCOUNT\/$AWS_EB_APPLICATION/" | sed "s/<TAG>/$BRANCH.$BUILD_NUMBER/" | sed "s/<DOCKER_CONFIG>/$AWS_EB_APPLICATION\/$AWS_DEPLOY_JSON.$BRANCH.$BUILD_NUMBER/" > $AWS_DEPLOY_JSON.$BRANCH.$BUILD_NUMBER
-    - aws s3 cp $AWS_DEPLOY_JSON.$BRANCH.$BUILD_NUMBER s3://$AWS_S3_BUCKET/$AWS_S3_FOLDER/$AWS_DEPLOY_JSON.$BRANCH.$BUILD_NUMBER --region=$AWS_REGION
-    - aws s3 cp /root/.docker/config.json s3://$AWS_S3_BUCKET/$AWS_S3_FOLDER/$AWS_DOCKER_CONFIG.$BRANCH.$BUILD_NUMBER --region=$AWS_REGION
-    - aws elasticbeanstalk create-application-version --application-name $AWS_EB_APPLICATION --version-label $ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION.$BRANCH.$BUILD_NUMBER --source-bundle S3Bucket=$AWS_S3_BUCKET,S3Key=$AWS_S3_FOLDER/$AWS_DEPLOY_JSON.$BRANCH.$BUILD_NUMBER --region=$AWS_REGION
-    - sleep 20s #This sleep is to make sure the image is available in the registry
-    - aws elasticbeanstalk update-environment --environment-name $AWS_EB_ENVIRONMENT --version-label $ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION.$BRANCH.$BUILD_NUMBER --region=$AWS_REGION
+    - docker tag -f $REGISTRY_ACCOUNT/$APPLICATION/$SERVICE:latest $REGISTRY_ACCOUNT/$APPLICATION/$SERVICE:$BRANCH.$BUILD_NUMBER
+    - docker push $REGISTRY_ACCOUNT/$APPLICATION/$SERVICE:$BRANCH.$BUILD_NUMBER
 
 integrations:
     hub:
-      - integrationName: "Docker Hub"
-        type: docker
+      - integrationName: "Amazon ECR"
+        type: aws
         branches:
           only:
-            - amazon-eb-cli-beta
+            - amazon-ecr-ecs
