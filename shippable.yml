@@ -9,7 +9,7 @@ env:
   global:
     - XUNIT_FILE=./shippable/testresults/result.xml
     - APPLICATION=aye0aye
-    - SERVICE=micro-api
+    - SERVICE=micro-api-beta
     - REGISTRY_ACCOUNT=288971733297.dkr.ecr.us-east-1.amazonaws.com # image registry account name/location
 
 build:
@@ -39,4 +39,4 @@ integrations:
         type: aws
         branches:
           only:
-            - amazon-ecr-ecs
+            - amazon-ecr-ecs-beta
