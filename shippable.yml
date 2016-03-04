@@ -41,3 +41,22 @@ integrations:
         branches:
           only:
             - amazon-ecr-ecs-beta
+    notifications:
+      - integrationName: slack_notifications
+        type: slack
+        recipients:
+          - "#beta"
+        branches:
+          only:
+            - amazon-ecr-ecs-beta
+        on_start : never
+        on_success: always
+        on_failure: always
+      - integrationName: email
+        type: email
+        branches:
+          only:
+            - amazon-ecr-ecs-beta
+        on_success: never
+        on_failure: never
+        on_pull_request: never
