@@ -37,28 +37,9 @@ build:
 
 integrations:
     hub:
-      - integrationName: "GCR-shippable-gke"
+      - integrationName: GCR-shippable-gke
         type: gcr
         agent_only: false
         branches:
           only:
             - google-gcr-gke-beta
-    notifications:
-      - integrationName: slack_notifications
-        type: slack
-        recipients:
-          - "#beta"
-        branches:
-          only:
-            - google-gcr-gke-beta
-        on_start : never
-        on_success: always
-        on_failure: always
-      - integrationName: email
-        type: email
-        branches:
-          only:
-            - google-gcr-gke-beta
-        on_success: never
-        on_failure: never
-        on_pull_request: never
