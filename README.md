@@ -1,43 +1,42 @@
 # micro-api demo application
 
-This is the back-end of a simple 2-tier app to demonstrate deploying [Docker]
-(www.docker.com)-based application on [AWS Elastic Beanstalk]
-(aws.amazon.com/elasticbeanstalk) through Shippable. To see the full functionality
+This is the back-end of a simple 2-tier app to demonstrate using Google Container Registry
+with Shippable. To see the full functionality
 of the app, use the same steps to deploy the front-end of the app which is also
 on Aye0Aye called [micro-www](https://github.com/aye0aye/micro-www).
 
-When this sample repo is enabled in Shippable, the CI process performs the following:
+Prerequisites for running this sample:
+1. Create a project called 'shippable-gke' within Google Cloud Platform
+2. [Install the gcloud cli tool](https://cloud.google.com/sdk/downloads) and
+configure it for your GCP account:
+  * `gcloud auth login`
+  * `gcloud configure set project shippable-gke`
+3. Clone the [aye0aye/micro-image repository](https://github.com/aye0aye/micro-image)
+ to your local machine
+4. Run Docker Build for this repository to create the aye0aye base image:
+  * `docker build -t gcr.io/shippable-gke/micro-image:latest .`
+5. Push the base image to your Google Container Registry:
+  * `gcloud docker push gcr.io/shippable-gke/micro-image:latest .`
+6. Fork the aye0aye/micro-api repository, e.g. to your GitHub account
+6. Log into Shippable and [enable a project for your fork](http://docs.shippable.com/ci_subscriptions/#enabling-a-project)
+7. [Create an Account Integration for GCR](http://docs.shippable.com/int_docker_registries/#google-container-registry-gcr)
+ called 'GCR-shippable-gke' and [assign it to your project](http://docs.shippable.com/ci_projects/#enabling-integrations)
+
+Once you have enabled this sample repo in Shippable, the CI process performs the following:
 * Uses Docker to build the CI environment from a Dockerfile, pulling the base
-image from public Docker Hub repository "aye0aye/micro-image"
+image from a public repository "aye0aye/micro-image"
 * Executes some basic CI tests
 * Stores the test results and code coverage report
-* Upon successful CI build:
-  * Pushes the newly built Docker image to Docker Hub repository "aye0aye/micro-api"
-  * Deploys the new image to an Elastic Beanstalk application
+* Upon successful CI build, pushes the newly built Docker image to Google Container Registry
 
-# Optional environment variables required for application:
+# Optional environment variables for the application (set in Dockerfile):
 - API_PORT: Port used for app (default:80)
 - LOG_LEVEL: Specifies log level for Winston console (silly, debug, verbose, info, warn, error).
 This microservice uses info and error messages only.
 - SHUD_LOG_TO_FILE: true or false, specifies whether to save logs to logs.log
 
-# Environment variables required for deploying to Elastic Beanstalk
-Before beginning, create a new application and environment in Elastic Beanstalk
-using [the instructions available here](https://aws.amazon.com/elasticbeanstalk/getting-started/).
-
-In the shippable.yml, change the following values based on your EB application:
-- AWS_EB_APPLICATION:_yourElasticBeanstalkApplicationName_
-- AWS_EB_ENVIRONMENT=_yourElasticBeanstalkEnvironmentName_
-- AWS_S3_BUCKET=_yourS3BucketName_
-- AWS_S3_FOLDER=_yourS3FolderName_ to upload deployment config files
-- AWS_REGION=_yourPreferredAwsRegion_
-- REGISTRY_ACCOUNT=_yourDockerRegistryAccount_  
-  * Note that this can be the account/registry URL for any valid Docker Registry
-- ACCOUNT_IDENTIFIER=shippable.$REGISTRY_ACCOUNT
-  * No changes needed
-- AWS_DEPLOY_JSON=Dockerrun.aws.json.$ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION
-  * No changes needed
-- AWS_DOCKER_CONFIG=dockerconfig.$ACCOUNT_IDENTIFIER.$AWS_EB_APPLICATION
-  * No changes needed
-- secure variable 1: use the Shippable project settings page to encrypt your AWS_ACCESS_KEY_ID
-- secure variable 2: use the Shippable project settings page to encrypt your AWS_SECRET_ACCESS_KEY
+# Environment variables required for pulling and pushing from GCR:
+In the shippable.yml, you won't need to change any of the environment variables:
+- SERVICE=micro-api
+- PROJECT_ID=shippable-gke
+- REGISTRY_ACCOUNT=gcr.io/$PROJECT_ID

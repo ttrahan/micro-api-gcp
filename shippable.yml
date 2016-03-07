@@ -7,10 +7,10 @@ node_js:
 
 env:
   global:
-    - XUNIT_FILE=./shippable/testresults/result.xml
-    - SERVICE=micro-api-beta
-    - PROJECT_ID=shippable-gke # Project ID for GCP project
+    - SERVICE=micro-api
+    - PROJECT_ID=shippable-gke # Project ID for existing GCP project
     - REGISTRY_ACCOUNT=gcr.io/$PROJECT_ID # image registry account name/location
+    - XUNIT_FILE=./shippable/testresults/result.xml # location to store test results
 
 build:
   pre_ci:
@@ -33,7 +33,6 @@ build:
   push:
     - docker tag -f $REGISTRY_ACCOUNT/$SERVICE:latest $REGISTRY_ACCOUNT/$SERVICE:$BRANCH.$BUILD_NUMBER
     - docker push $REGISTRY_ACCOUNT/$SERVICE:$BRANCH.$BUILD_NUMBER
-
 
 integrations:
     hub:
