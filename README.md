@@ -7,19 +7,9 @@ on Aye0Aye called [micro-www](https://github.com/aye0aye/micro-www).
 
 Prerequisites for running this sample:
 1. Create a project called 'shippable-gke' within Google Cloud Platform
-2. [Install the gcloud cli tool](https://cloud.google.com/sdk/downloads) and
-configure it for your GCP account:
-  * `gcloud auth login`
-  * `gcloud configure set project shippable-gke`
-3. Clone the [aye0aye/micro-image repository](https://github.com/aye0aye/micro-image)
- to your local machine
-4. Run Docker Build for this repository to create the aye0aye base image:
-  * `docker build -t gcr.io/shippable-gke/micro-image:latest .`
-5. Push the base image to your Google Container Registry:
-  * `gcloud docker push gcr.io/shippable-gke/micro-image:latest .`
-6. Fork the aye0aye/micro-api repository, e.g. to your GitHub account
-6. Log into Shippable and [enable a project for your fork](http://docs.shippable.com/ci_subscriptions/#enabling-a-project)
-7. [Create an Account Integration for GCR](http://docs.shippable.com/int_docker_registries/#google-container-registry-gcr)
+2. Fork the [aye0aye/micro-api]() repository, e.g. to your GitHub account
+3. Log into Shippable and [enable a project for your fork](http://docs.shippable.com/ci_subscriptions/#enabling-a-project)
+4. [Create an Account Integration for GCR](http://docs.shippable.com/int_docker_registries/#google-container-registry-gcr)
  called 'GCR-shippable-gke' and [assign it to your project](http://docs.shippable.com/ci_projects/#enabling-integrations)
 
 Once you have enabled this sample repo in Shippable, the CI process performs the following:
