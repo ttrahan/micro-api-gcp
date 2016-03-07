@@ -7,7 +7,7 @@ node_js:
 
 env:
   global:
-    - SERVICE=micro-api-beta
+    - SERVICE=micro-api
     - PROJECT_ID=shippable-gke # Project ID for existing GCP project
     - REGISTRY_ACCOUNT=gcr.io/$PROJECT_ID # image registry account name/location
     - XUNIT_FILE=./shippable/testresults/result.xml # location to store test results

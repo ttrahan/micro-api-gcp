@@ -37,6 +37,6 @@ This microservice uses info and error messages only.
 
 # Environment variables required for pulling and pushing from GCR:
 In the shippable.yml, you won't need to change any of the environment variables:
-- SERVICE=micro-api-beta
+- SERVICE=micro-api
 - PROJECT_ID=shippable-gke
 - REGISTRY_ACCOUNT=gcr.io/$PROJECT_ID

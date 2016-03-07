@@ -1,4 +1,4 @@
-FROM gcr.io/shippable-gke/micro-image:flat.1
+FROM aye0aye/micro-image:prod
 
 # this folder must be created in the base images
 ADD . /root/micro-api/
