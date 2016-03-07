@@ -38,8 +38,8 @@ build:
 integrations:
     hub:
       - integrationName: GCR-shippable-gke
-        type: GCR
-        agent_only: false
+        type: gcr
+        agent_only: true
         branches:
           only:
             - google-gcr-gke-beta
