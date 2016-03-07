@@ -41,4 +41,4 @@ integrations:
         agent_only: true
         branches:
           only:
-            - google-gcr-gke-beta
+            - google-gcr-gke
