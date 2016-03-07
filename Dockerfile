@@ -1,4 +1,4 @@
-FROM 288971733297.dkr.ecr.us-east-1.amazonaws.com/micro-image:flat.1
+FROM gcr.io/shippable-gke/micro-image:flat.1
 
 # this folder must be created in the base images
 ADD . /root/micro-api/
