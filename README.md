@@ -7,10 +7,12 @@ on Aye0Aye called [micro-www](https://github.com/aye0aye/micro-www).
 
 #### Prerequisites for running this sample:
 1. Create a project called 'shippable-gke' within Google Cloud Platform
-2. Fork the [aye0aye/micro-api]() repository, e.g. to your GitHub account
+2. Fork the [aye0aye/micro-api](https://github.com/aye0aye/micro-api/tree/google-gcr-gke) repository, e.g. to your GitHub account
 3. Log into Shippable and [enable a project for your fork](http://docs.shippable.com/ci_subscriptions/#enabling-a-project)
 4. [Create an Account Integration for GCR](http://docs.shippable.com/int_docker_registries/#google-container-registry-gcr)
  called 'GCR-shippable-gke' and [assign it to your project](http://docs.shippable.com/ci_projects/#enabling-integrations)
+
+ Note: In this sample, you will be working with branch "google-gcr-gke"
 
 #### When run, the CI process performs the following:
 * Uses Docker to build the CI environment from a Dockerfile, pulling the base
@@ -19,14 +21,8 @@ image from a public repository "aye0aye/micro-image"
 * Stores the test results and code coverage report
 * Upon successful CI build, pushes the newly built Docker image to Google Container Registry
 
-#### Optional environment variables for the application (set in Dockerfile):
-- API_PORT: Port used for app (default:80)
-- LOG_LEVEL: Specifies log level for Winston console (silly, debug, verbose, info, warn, error).
-This microservice uses info and error messages only.
-- SHUD_LOG_TO_FILE: true or false, specifies whether to save logs to logs.log
-
-#### Environment variables required for pulling and pushing from GCR:
-In the shippable.yml, you won't need to change any of the environment variables:
+#### Environment variables required for pulling and pushing from GCR in shippable.yml:
+In the shippable.yml, you should't need to change any of the environment variables:
 - SERVICE=micro-api
 - PROJECT_ID=shippable-gke
 - REGISTRY_ACCOUNT=gcr.io/$PROJECT_ID
